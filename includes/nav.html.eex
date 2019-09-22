@@ -1,0 +1,5 @@
+<ul>
+  <li><a href="<%= page "index" %>">Home</a></li>
+  <li><a href="<%= base "posts" %>">Posts</a></li>
+  <li><a href="<%= page "contacts" %>">Contacts</a></li>
+</ul>

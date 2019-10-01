@@ -37,4 +37,4 @@ PrePush:
     quiet: false
     enabled: true
     on_warn: fail
-    command: ["mix", "serum.build"]
+    required_executable: './bin/build'

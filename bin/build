@@ -3,4 +3,3 @@
 mix serum.build
 
 git add site/.
-git commit -m "Chore(Deployment): Add latest build"

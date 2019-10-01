@@ -1,0 +1,92 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Posts - Rasjonell Tech</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+        <h1><a href="/">Rasjonell Tech</a></h1>
+        <p>My random thoughts</p>
+      </header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/contacts.html">Contacts</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><article class="list"><header><h1 id="posts">Posts</h1></header><div><ul><li class="article"><h2 id="setting-up-my-personal-blog-"><a href="/posts/2019-10-01-setting-up-my-personal-blog.html">Setting Up My Personal Blog</a><br/></h2><p class="post-date">
+            Tuesday, 1 Oct 2019
+            
+              <span class="tags">
+                Tags:
+                
+                  <a class="tag" href="/tags/Elixir">Elixir</a><a class="tag" href="/tags/Serum">Serum</a></span></p><p class="preview">Getting the domain Just like any the other side projects the first thing you do is getting a domain. As a part of my GitHub Education Pack I got a number of options for free domain registration. As I had previously used the services of GoDaddy and NameC…</p></li></ul></div><p class="pagination">
+    Showing Page 1 of 1.
+    
+    
+  </p></article></main>
+      <hr>
+      <footer>
+        
+<!--=====================================-->
+<!-- Override "includes/footer.html.eex" -->
+<!-- to customize your footer contents.  -->
+<!--=====================================-->
+
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.2.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>

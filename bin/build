@@ -1,5 +1,3 @@
 #!/bin/sh
 
-mix serum.build
-
-git add site/.
+mix serum.build && git add site/.

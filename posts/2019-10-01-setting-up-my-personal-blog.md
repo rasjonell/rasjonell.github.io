@@ -8,7 +8,7 @@ tags: Elixir, Serum
 
 ## Getting the domain
 
-Just like any the other side projects the first thing you do is getting a domain.
+Just like with any other side project of yours, the first thing you do is getting a domain.
 
 As a part of my [GitHub Education Pack](https://education.github.com/) I got a number of options for free domain registration. As I had previously used the services of [GoDaddy](https://godaddy.com) and [NameCheap](http://namecheap.com) I decided to go with [GetTech](https://get.tech).
 
@@ -31,7 +31,7 @@ As a huge fan of [Elixir](https://elixir-lang.org) I looked for projects written
 
 ![Obelisk Issue](/media/obelisk_issue.png)
 
-So I had to make a choice between SSG and Serum. Writing this I figured out that there is no rational(or should I say _rasjonell_ 🤔) reason of choosing any other software instead of SSG but my love for declarative programming and good ol' memories of ruby-ish syntax made me choose Serum.
+So I had to make a choice between SSG and Serum. Writing this I figured out that there is no rational(or should I say _rasjonell_ 🤔) reason for choosing any other software instead of SSG but my love for declarative programming and good ol' memories of ruby-ish syntax made me choose Serum.
 
 Setting up the project was as straightforward as it could be. You download the software, compile it and there you go. I also installed a custom theme, for which I had to change a single line in my config file(I'm thinking of forking this theme to add a dark mode). Refer to the [official guide](https://dalgona.github.io/Serum/getting-started.html) for more detailed introduction.
 

@@ -1,6 +1,6 @@
 %{
-  site_name: "Rasjonell Tech",
-  site_description: "My random thoughts",
+  site_name: "{:ok, :rasjonell}",
+  site_description: "Yinging and yanging noided",
   date_format: "{WDfull}, {D} {Mshort} {YYYY}",
   base_url: "/",
   author: "rasjonell",

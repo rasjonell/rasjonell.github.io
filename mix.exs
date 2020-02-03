@@ -20,8 +20,7 @@ defmodule Blog.MixFile do
   defp deps do
     [
       {:serum, "~> 1.2"},
-      {:serum_theme_essence,
-       git: "https://github.com/rasjonell/serum-theme-essence.git", tag: "1.0.2"}
+      {:serum_theme_essence, "~> 1.0"}
     ]
   end
 end

@@ -22,7 +22,7 @@ Graph databases caught my interest and I've been experimenting with them for a c
 
 ### Better Mental Modeling
 
-As an example let's think about a basic social media. At the core all we need is `user follows user`. With traditional "relational" databases you'd need to create a through table that holds foreign-keys to represent this many-to-many relationship. This itself is already unnecessarily complicated, but what if we introduce posts, reactions, etc. In order to fetch posts only from users that the current user follows you'd need to do expensive multiple joins and possibly sub-queries.
+As an example let’s think about a basic social media interaction. At the core all we need is `user follows user`. With traditional "relational" databases you'd need to create a through table that holds foreign-keys to represent this many-to-many relationship. This itself is already unnecessarily complicated, but what if we introduce posts, reactions, etc. In order to fetch posts only from users that the current user follows you'd need to do expensive multiple joins and possibly sub-queries.
 
 However with graphs it is as simple as stating the relationship.
 ![Graph representation of user follows user relationship](/media/user_user.png)
@@ -206,13 +206,17 @@ Now If you go the the API tab, you will see the newly created `POST /user` API, 
 
 ![Screenshot of ArangoDB Services Web View](/media/arango_service.png)
 
-Give it a try an create a user. After successfully creating a user, the API will respond with `200 OK` and will send the user data back. If you try to create a user with the same username the API should respond with `400 Bad Request` with an error massage that states that the username is already in use.
+Give it a try and create a user. After successfully creating the user, the API will respond with `200 OK` and send the user data back. If you try to create a user with the same username the API should respond with `400 Bad Request` and error massage that states that the username is already in use.
 
 ## Next Steps
 
-I hope I've succeeded in convincing you to give ArangoDB and Foxx Microservices a try. If you do so, you'll discover a lot more than I managed to cover in this article. My favorite Foxx features are [Linking Services](https://www.arangodb.com/docs/3.7/foxx-guides-dependencies.html) together and making them [configurable](https://www.arangodb.com/docs/3.7/foxx-reference-configuration.html).
+I hope I've succeeded in convincing you to give ArangoDB and Foxx Microservices a try. If you do so, you'll discover a lot more than I've managed to cover in this article. My favorite Foxx features are [Linking Services](https://www.arangodb.com/docs/3.7/foxx-guides-dependencies.html) together and making them [configurable](https://www.arangodb.com/docs/3.7/foxx-reference-configuration.html).
 
 You can checkout https://github.com/SquashConsulting/foxx_services to see how we used both of these(and other cool) features to create a separate Data Access Layer with [shared](https://github.com/SquashConsulting/shared) utils where you can define your configurations and have all the other linked services be generic.
+
+## Conclusion
+
+To wrap things up, separating your Data Access Layer(DAL) from your Business Logic Layer(BLL) is a technique that results in maintainable and modular code-base. Using ArangoDB Foxx with Typescript and joi validations to accomplish this provides additional benefits such as configurable, performant, and type-safe microservices.
 
 If you liked this article consider following me on [Mastodon](https://թութ.հայ/@gurgen) or Twitter [@irasjonell](https://twitter.com/iRasjonell) and maybe starring the repos used in this article.
 

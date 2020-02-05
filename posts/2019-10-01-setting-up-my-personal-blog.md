@@ -2,6 +2,7 @@
 title: Setting Up My Personal Blog
 date: 2019-10-01
 tags: Elixir, Serum
+template: doc
 ---
 
 <serum-toc start="2" end="4" />

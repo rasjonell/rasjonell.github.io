@@ -1,0 +1,6 @@
+<% {{year, _, _}, _} = :calendar.local_time %>
+<p>
+  Copyright &copy; <%= year %> Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>

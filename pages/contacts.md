@@ -2,4 +2,4 @@
 title: "Contact Me"
 ---
 
-Email: me@rasjonell.tech
+Email: irasjonell@pm.me

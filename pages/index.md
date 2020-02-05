@@ -1,5 +1,4 @@
 ---
 title: Rasjonell Tech
+template: main
 ---
-
-_Stay Noided!_

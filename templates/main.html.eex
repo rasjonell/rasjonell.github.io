@@ -1,0 +1,9 @@
+<%= @contents %>
+<div>
+  <h2>Read My Posts About: </h2>
+  <%= for {tag, _} <- @all_tags do %>
+    <a href="<%= tag.list_url %>">
+      <%= tag.name %>
+    </a> |
+  <% end %>
+</div>

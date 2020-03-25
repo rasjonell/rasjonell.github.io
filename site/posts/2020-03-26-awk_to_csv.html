@@ -1,0 +1,140 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Using AWK To Process Huge CSV Files - {:ok, :rasjonell}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+<h1><a href="/">{:ok, :rasjonell}</a></h1>
+<p>Yinging and yanging noided</p>
+</header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/foxx.html">Presentations</a></li>
+  <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><article><div><header><h1 id="using-awk-to-process-huge-csv-files">Using AWK To Process Huge CSV Files</h1><p>About 4 minutes to read</p><hr/></header><ul id="toc" class="serum-toc"><li class="indent-0"><a href="#problem"><span class="number">1</span>Problem</a></li><li class="indent-0"><a href="#approach"><span class="number">2</span>Approach</a></li><li class="indent-0"><a href="#solution"><span class="number">3</span>Solution</a></li><li class="indent-0"><a href="#conclusion"><span class="number">4</span>Conclusion</a></li></ul><h2 id="problem">Problem</h2><p>I had 38 separate <code class="inline">.csv</code> files each consisted of at least 40K lines of data. Overall there were ≥ 2.6 million rows of information. The problem is that the data was not in the ideal form.</p><p>Each file had 5 columns. One of the columns was called <em>birthday</em>. It had a conventional(at least for the most of the world) format: <code class="inline">DD/MM/YYYY</code>. However I was going to put this data in a DB(more on that later!) and I needed to have 3 separate properties(ie. <code class="inline">{ day: DD, month: MM, year: YYYY }</code>). Also there were some columns that were not useful so I had to get rid of them. In addition, I also wanted to reduce the number of files to one.</p><h2 id="approach">Approach</h2><p>I know some python and from a couple of data science courses I was introduced to <a href="https://pandas.pydata.org/">Pandas</a>, a well-known tool for data analysis built on top of python. It had a straightforward way of reading, manipulating, and writing csv files. I was going to use that, but didn’t really want to download this tool to use only one of the features and never use it again. So I choose something that comes with nearly all modern unix-like systems. <a href="https://en.wikipedia.org/wiki/AWK">AWK</a> is <em>designed</em> for text processing and much like other programs in the unix-like world it does one thing well and produces fascinating results in regards to simplicity and performance when composed with other unix tools.</p><h2 id="solution">Solution</h2><p>Now we need to make AWK process <code class="inline">.csv</code> files.
+AWK uses <em>field separators</em> to split an input into fields. It may either be a character or a RegExp.
+So all we need to do to make AWK become a <code class="inline">.csv</code> processor is to set FS(field separator) to be <code class="inline">&quot;,&quot;</code>.</p><p>We can achieve this using AWK’s <a href="https://www.gnu.org/software/gawk/manual/html_node/Using-BEGIN_002fEND.html#Using-BEGIN_002fEND">Startup and Cleanup Actions</a>.</p><pre><code class="awk"># clean_csv.awk
+
+BEGIN {
+  FS = &quot;,&quot;
+}
+{
+  print $1
+}
+END {
+}</code></pre><p>Then if we pass an input such as <code class="inline">one, two, three</code> to the script, it will print <code class="inline">one</code>:</p><pre><code class="sh">$ echo &quot;one, two, three&quot; | awk -f csv.awk
+
+1</code></pre><p>Now that we have this, we can finally solve our problems: splitting <code class="inline">DD/MM/YYYY</code> column into three separate columns and removing the useless column.
+AWK has a <code class="inline">split</code> function that takes a field, a new variable, and a separator and puts the separated values into the new variable.</p><p>The birthday column was #3 so to create the separate fields we need to make the following modifications:</p><pre><code class="awk"># clean_csv.awk
+
+
+BEGIN {
+  FS = &quot;,&quot;
+}
+{
+  # split DD/MM/YYY into an array of values
+  split($4, dob, &quot;/&quot;)
+
+  # turn these values into separate columns
+  total = dob[1] &quot;,&quot; dob[2] &quot;,&quot; dob[3]
+
+  # finalize the row, omitting the useless #4 column.
+  row = $1 &quot;,&quot; $2 &quot;,&quot; total &quot;,&quot; $5
+
+  print row
+}
+END {
+}</code></pre><p>This mainly solves most of our problems, except for the first row of the input. <code class="inline">.csv</code> files have headers as a set of labels on the first row, thus we need to skip every first line of every <code class="inline">.csv</code> file.</p><p>In AWK <code class="inline">NR</code> and <code class="inline">FNR</code> represent the record number. The latter shows the record number of the current file, while the first holds the total count. Since we are going to use this script on more then one file, we’ll stick with <code class="inline">FNR</code>.</p><p>So the final script looks like so:</p><pre><code class="awk"># clean_csv.awk
+
+BEGIN {
+  FS = &quot;,&quot;
+
+  # create a new header with correct labels
+  print &quot;last_name,first_name,birth_day,birth_month,birth_year,country&quot;
+}
+{
+  if (FNR &gt; 1) { # omit every first line
+    # split DD/MM/YYY into an array of values
+    split($4, dob, &quot;/&quot;)
+
+    # turn these values into separate columns
+    total = dob[1] &quot;,&quot; dob[2] &quot;,&quot; dob[3]
+
+    # finalize the row, omitting the useless #4 column.
+    row = $1 &quot;,&quot; $2 &quot;,&quot; total &quot;,&quot; $5
+
+    print row
+  }
+}
+END {
+}</code></pre><p>At last, to execute this on our 38 <code class="inline">.csv</code> files we need to run this command:</p><pre><code class="sh">awk -f clean_csv *.csv &gt; clean.csv</code></pre><h2 id="conclusion">Conclusion</h2><p>We read and manipulated over 30 <code class="inline">.csv</code> files with more than 2.6 million rows of data combined and reduced them into a single clean file without installing any software. So if you’re faced with a problem, you may not need to install a bloated software to solve it when the solution comes pre-installed with your system.</p></div></article></main>
+      <hr>
+      <footer>
+        
+
+<p>
+  Copyright &copy; 2020 Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.3.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>

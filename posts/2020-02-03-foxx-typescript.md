@@ -3,6 +3,7 @@ title: Separate Data Access Layer With TypeScript Powered MicroServices
 date: 2020-02-03 09:13:33
 tags: Typescript, GraphDB, ArangoDB
 template: doc
+marp: false
 ---
 
 ## TL;DR

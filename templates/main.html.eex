@@ -1,19 +1,17 @@
 <%= @contents %>
+<%
+  tags = @all_tags
+    |> Enum.map(fn {tag, _} -> """
+      <a href="#{tag.list_url}">
+        #{tag.name}
+      </a>
+    """ end)
+    |> Enum.join("|")
+%>
 
 <div>
   <h2>Read My Posts About: </h2>
-  <%= for {tag, _} <- @all_tags do %>
-    <a href="<%= tag.list_url %>">
-      <%= tag.name %>
-    </a> |
-  <% end %>
-</div>
-<hr/>
-<div>
-  <h2>Check Out My Presentations: </h2>
-  <h2>
-    <a href="https://rasjonell.github.io/presentations/index.html" target="_blank">rasjonell/presentations</a>
-  </h2>
+  <%= tags %>
 </div>
 <hr/>
 <div style="display: flex; justify-content: space-evenly;">

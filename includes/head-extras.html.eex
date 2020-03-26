@@ -22,3 +22,29 @@
 <meta property="og:type" content="article" />
 <meta property="og:image" content="https://rasjonell.tech/assets/images/me.jpg" />
 <meta property="og:site_name" content="Rasjonell Tech" />
+
+<style>
+  .contacts {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .gig {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .full-width: {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>

@@ -23,8 +23,8 @@
   <%= tags %>
 </div>
 <hr/>
-<div style="display: flex; justify-content: space-evenly;">
-  <div style="display: flex; flex-direction: column; align-items: center;">
+<div class="contacts">
+  <div class="gig">
     <h2>Find My Gigs On Fiverr</h2>
     <div itemscope itemtype='http://schema.org/Person' class='fiverr-seller-widget' style='display: inline-block;'>
       <a itemprop='url' href=https://www.fiverr.com/rasjonell rel="nofollow" target="_blank" style='display: inline-block;'>
@@ -38,7 +38,7 @@
       </a>
     </div>
   </div>
-  <div style="display: flex; flex-direction: column; justify-content: space-between;">
+  <div class="gig">
     <div>
       <h2>Email Me For A Project</h2>
       <ul>

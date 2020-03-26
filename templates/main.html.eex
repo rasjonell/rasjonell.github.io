@@ -7,8 +7,17 @@
       </a>
     """ end)
     |> Enum.join("|")
+
+  latest_post = hd @all_posts
 %>
 
+<div>
+<h2>Read My Latest Post</h2>
+  <a href="<%= latest_post.url %>">
+    <h3><%= latest_post.title %></h3>
+  </a>
+</div>
+<hr>
 <div>
   <h2>Read My Posts About: </h2>
   <%= tags %>

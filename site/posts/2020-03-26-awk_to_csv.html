@@ -52,7 +52,7 @@ BEGIN {
 END {
 }</code></pre><p>Then if we pass an input such as <code class="inline">one, two, three</code> to the script, it will print <code class="inline">one</code>:</p><pre><code class="sh">$ echo &quot;one, two, three&quot; | awk -f csv.awk
 
-1</code></pre><p>Now that we have this, we can finally solve our problems: splitting <code class="inline">DD/MM/YYYY</code> column into three separate columns and removing the useless column.
+one</code></pre><p>Now that we have this, we can finally solve our problems: splitting <code class="inline">DD/MM/YYYY</code> column into three separate columns and removing the useless column.
 AWK has a <code class="inline">split</code> function that takes a field, a new variable, and a separator and puts the separated values into the new variable.</p><p>The birthday column was #3 so to create the separate fields we need to make the following modifications:</p><pre><code class="awk"># clean_csv.awk
 
 

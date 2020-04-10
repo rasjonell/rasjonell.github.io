@@ -39,23 +39,23 @@
     </div>
   </div>
   <div class="gig">
-    <div>
+    <div class="gig">
       <h2>Email Me For A Project</h2>
-      <ul>
+      <ul class="list">
         <li><a href="mailto:me@xn--09aag2eh2cn.xn--y9a3aq">me@գուրգեն.հայ</a></li>
         <li><a href="mailto:irasjonell@pm.me">irasjonell@pm.me</a></li>
         <li><a href="mailto:info.gurgen@gmail.com">info.gurgen@gmail.com</a></li>
       </ul>
     </div>
-    <div>
+    <div class="gig">
       <h2>Connect With Me On LinkedIn</h2>
-      <ul>
+      <ul class="list">
         <li><a href="https://www.linkedin.com/in/gurgenhayrapetyan/">Gurgen Hayrapetyan</a></li>
       </ul>
     </div>
-    <div>
+    <div class="gig">
       <h2>Find Me On Social Media</h2>
-      <ul>
+      <ul class="list">
         <li><a href="https://թութ.հայ/@gurgen" target="_blank">գուրգեն@թութ.հայ</a> (Mastodon)</li>
         <li><a href="https://spyurk.am/people/49d681f00fff01366a0c746d04923301" target="_blank">rasjonell@spyurk.am</a> (Diaspora*)</li>
         <li><a href="https://twitter.com/irasjonell" target="_blank">irasjonell@twitter.com</a> (Twitter)</li>

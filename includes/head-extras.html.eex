@@ -35,6 +35,10 @@
     flex-direction: column;
   }
 
+  .list {
+    margin: 0;
+  }
+
   .full-width: {
     width: 100%;
   }

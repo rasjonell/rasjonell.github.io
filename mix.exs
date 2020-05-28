@@ -20,7 +20,8 @@ defmodule Blog.MixFile do
   defp deps do
     [
       {:serum, "~> 1.2"},
-      {:serum_theme_essence, "~> 1.0"}
+      {:serum_theme_essence, "~> 1.0"},
+      {:timex, "~> 3.5"}
     ]
   end
 end

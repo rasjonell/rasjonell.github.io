@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+  <title>Rasjonell's Blog</title>
+  <link>https://www.rasjonell.tech</link>
+  <description>Random rants about technology</description>
+  <lastBuildDate>Thu, 28 May 20 15:28:42 +0000</lastBuildDate>
+  <language>en-us</language>
+<item>
+  <title>Using AWK To Process Huge CSV Files</title>
+  <description><![CDATA[Problem I had 38 separate .csv files each consisted of at least 40K lines of data. Overall there were ≥ 2.6 million rows of information. The problem was that the data was not in the ideal form. Each file had 5 columns. One of the columns was called birt…]]></description>
+  <pubDate>Thu, 28 May 20 15:28:42 +0000</pubDate>
+  <link>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</link>
+  <guid>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</guid>
+</item>
+<item>
+  <title>Separate Data Access Layer With TypeScript Powered MicroServices</title>
+  <description><![CDATA[TL;DR ArangoDB is a multi-model database supporting Key/Value, Document, and Graph models with one unifying query language. Foxx Microservices are Arango’s way of writing separate data access and domain logic code running directly within the database wi…]]></description>
+  <pubDate>Thu, 28 May 20 15:28:42 +0000</pubDate>
+  <link>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</link>
+  <guid>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</guid>
+</item>
+<item>
+  <title>Setting Up My Personal Blog</title>
+  <description><![CDATA[Getting the domain Just like with any other side project of yours, the first thing you do is getting a domain. As a part of my GitHub Education Pack I got a number of options for free domain registration. As I had previously used the services of GoDaddy…]]></description>
+  <pubDate>Thu, 28 May 20 15:28:42 +0000</pubDate>
+  <link>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</link>
+  <guid>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</guid>
+</item>
+</channel>
+</rss>

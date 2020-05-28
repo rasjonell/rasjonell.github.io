@@ -6,6 +6,7 @@
   author: "rasjonell",
   author_email: "me@rasjonell.tech",
   plugins: [
+    Blog.Rss,
     Blog.ReadTime,
     Serum.Plugins.TableOfContents,
     {Serum.Plugins.LiveReloader, only: :dev}

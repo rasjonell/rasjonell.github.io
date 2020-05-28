@@ -1,6 +1,7 @@
 <ul>
   <li><a href="<%= page "index" %>">Home</a></li>
   <li><a href="<%= base "posts" %>">Posts</a></li>
+  <li><a href="/rss.xml">RSS Feed</a></li>
   <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
   <li><a href="/assets/cv.pdf" target="_blank">Read My CV</a></li>
 </ul>

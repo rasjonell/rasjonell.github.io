@@ -4,26 +4,547 @@
   <title>Rasjonell's Blog</title>
   <link>https://www.rasjonell.tech</link>
   <description>Random rants about technology</description>
-  <lastBuildDate>Thu, 28 May 20 15:28:42 +0000</lastBuildDate>
+  <lastBuildDate>Thu, 28 May 20 15:44:50 +0000</lastBuildDate>
   <language>en-us</language>
 <item>
   <title>Using AWK To Process Huge CSV Files</title>
-  <description><![CDATA[Problem I had 38 separate .csv files each consisted of at least 40K lines of data. Overall there were ≥ 2.6 million rows of information. The problem was that the data was not in the ideal form. Each file had 5 columns. One of the columns was called birt…]]></description>
-  <pubDate>Thu, 28 May 20 15:28:42 +0000</pubDate>
+  <description><![CDATA[
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Using AWK To Process Huge CSV Files - {:ok, :rasjonell}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<meta name="twitter:site" content="@irasjonell">
+<meta name="twitter:creator" content="@irasjonell">
+<meta name="twitter:image" content="https://rasjonell.tech/assets/images/me.jpg">
+
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://rasjonell.tech/assets/images/me.jpg" />
+<meta property="og:site_name" content="Rasjonell Tech" />
+
+<style>
+  .contacts {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .gig {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .list {
+    margin: 0;
+  }
+
+  .full-width: {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+<h1><a href="/">{:ok, :rasjonell}</a></h1>
+<p>Yinging and yanging noided</p>
+</header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/rss.xml">RSS Feed</a></li>
+  <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
+  <li><a href="/assets/cv.pdf" target="_blank">Read My CV</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><article><div><header><h1 id="using-awk-to-process-huge-csv-files">Using AWK To Process Huge CSV Files</h1><p>About 4 minutes to read</p><hr/></header><ul id="toc" class="serum-toc"><li class="indent-0"><a href="#problem"><span class="number">1</span>Problem</a></li><li class="indent-0"><a href="#approach"><span class="number">2</span>Approach</a></li><li class="indent-0"><a href="#solution"><span class="number">3</span>Solution</a></li><li class="indent-0"><a href="#conclusion"><span class="number">4</span>Conclusion</a></li></ul><h2 id="problem">Problem</h2><p>I had 38 separate <code class="inline">.csv</code> files each consisted of at least 40K lines of data. Overall there were ≥ 2.6 million rows of information. The problem was that the data was not in the ideal form.</p><p>Each file had 5 columns. One of the columns was called <em>birthday</em>. It had a conventional(at least for the most of the world) format: <code class="inline">DD/MM/YYYY</code>. However I was going to put this data in a DB(more on that later!) and I needed to have 3 separate properties(ie. <code class="inline">{ day: DD, month: MM, year: YYYY }</code>). Also there were some columns that were not useful so I had to get rid of them. In addition, I also wanted to reduce the number of files to one.</p><h2 id="approach">Approach</h2><p>I know some python and from a couple of data science courses I was introduced to <a href="https://pandas.pydata.org/">Pandas</a>, a well-known tool for data analysis built on top of python. It had a straightforward way of reading, manipulating, and writing csv files. I was going to use that, but didn’t really want to download this tool to use only one of the features and never use it again. So I choose something that comes with nearly all modern unix-like systems. <a href="https://en.wikipedia.org/wiki/AWK">AWK</a> is <em>designed</em> for text processing and much like other programs in the unix-like world it does one thing well and produces fascinating results in regards to simplicity and performance when composed with other unix tools.</p><h2 id="solution">Solution</h2><p>Now we need to make AWK process <code class="inline">.csv</code> files.
+AWK uses <em>field separators</em> to split an input into fields. It may either be a character or a RegExp.
+So all we need to do to make AWK become a <code class="inline">.csv</code> processor is to set FS(field separator) to be <code class="inline">&quot;,&quot;</code>.</p><p>We can achieve this using AWK’s <a href="https://www.gnu.org/software/gawk/manual/html_node/Using-BEGIN_002fEND.html#Using-BEGIN_002fEND">Startup and Cleanup Actions</a>.</p><pre><code class="awk"># clean_csv.awk
+
+BEGIN {
+  FS = &quot;,&quot;
+}
+{
+  print $1
+}
+END {
+}</code></pre><p>Then if we pass an input such as <code class="inline">one, two, three</code> to the script, it will print <code class="inline">one</code>:</p><pre><code class="sh">$ echo &quot;one, two, three&quot; | awk -f csv.awk
+
+one</code></pre><p>Now that we have this, we can finally solve our problems: splitting <code class="inline">DD/MM/YYYY</code> column into three separate columns and removing the useless column.
+AWK has a <code class="inline">split</code> function that takes a field, a new variable, and a separator and puts the separated values into the new variable.</p><p>The birthday column was #3 so to create the separate fields we need to make the following modifications:</p><pre><code class="awk"># clean_csv.awk
+
+
+BEGIN {
+  FS = &quot;,&quot;
+}
+{
+  # split DD/MM/YYY into an array of values
+  split($4, dob, &quot;/&quot;)
+
+  # turn these values into separate columns
+  total = dob[1] &quot;,&quot; dob[2] &quot;,&quot; dob[3]
+
+  # finalize the row, omitting the useless #4 column.
+  row = $1 &quot;,&quot; $2 &quot;,&quot; total &quot;,&quot; $5
+
+  print row
+}
+END {
+}</code></pre><p>This mainly solves most of our problems, except for the first row of the input. <code class="inline">.csv</code> files have headers as a set of labels on the first row, thus we need to skip every first line of every <code class="inline">.csv</code> file.</p><p>In AWK <code class="inline">NR</code> and <code class="inline">FNR</code> represent the record number. The latter shows the record number of the current file, while the first holds the total count. Since we are going to use this script on more then one file, we’ll stick with <code class="inline">FNR</code>.</p><p>So the final script looks like so:</p><pre><code class="awk"># clean_csv.awk
+
+BEGIN {
+  FS = &quot;,&quot;
+
+  # create a new header with correct labels
+  print &quot;last_name,first_name,birth_day,birth_month,birth_year,country&quot;
+}
+{
+  if (FNR &gt; 1) { # omit every first line
+    # split DD/MM/YYY into an array of values
+    split($4, dob, &quot;/&quot;)
+
+    # turn these values into separate columns
+    total = dob[1] &quot;,&quot; dob[2] &quot;,&quot; dob[3]
+
+    # finalize the row, omitting the useless #4 column.
+    row = $1 &quot;,&quot; $2 &quot;,&quot; total &quot;,&quot; $5
+
+    print row
+  }
+}
+END {
+}</code></pre><p>At last, to execute this on our 38 <code class="inline">.csv</code> files we need to run this command:</p><pre><code class="sh">awk -f clean_csv *.csv &gt; clean.csv</code></pre><h2 id="conclusion">Conclusion</h2><p>We read and manipulated over 30 <code class="inline">.csv</code> files with more than 2.6 million rows of data combined and reduced them into a single clean file without installing any software. So if you’re faced with a problem, you may not need to install a bloated software to solve it when the solution comes pre-installed with your system.</p></div></article></main>
+      <hr>
+      <footer>
+        
+
+<p>
+  Copyright &copy; 2020 Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.3.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>
+]]></description>
+  <pubDate>Thu, 28 May 20 15:44:50 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</guid>
 </item>
 <item>
   <title>Separate Data Access Layer With TypeScript Powered MicroServices</title>
-  <description><![CDATA[TL;DR ArangoDB is a multi-model database supporting Key/Value, Document, and Graph models with one unifying query language. Foxx Microservices are Arango’s way of writing separate data access and domain logic code running directly within the database wi…]]></description>
-  <pubDate>Thu, 28 May 20 15:28:42 +0000</pubDate>
+  <description><![CDATA[
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Separate Data Access Layer With TypeScript Powered MicroServices - {:ok, :rasjonell}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<meta name="twitter:site" content="@irasjonell">
+<meta name="twitter:creator" content="@irasjonell">
+<meta name="twitter:image" content="https://rasjonell.tech/assets/images/me.jpg">
+
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://rasjonell.tech/assets/images/me.jpg" />
+<meta property="og:site_name" content="Rasjonell Tech" />
+
+<style>
+  .contacts {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .gig {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .list {
+    margin: 0;
+  }
+
+  .full-width: {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+<h1><a href="/">{:ok, :rasjonell}</a></h1>
+<p>Yinging and yanging noided</p>
+</header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/rss.xml">RSS Feed</a></li>
+  <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
+  <li><a href="/assets/cv.pdf" target="_blank">Read My CV</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><article><div><header><h1 id="separate-data-access-layer-with-typescript-powered-microservices">Separate Data Access Layer With TypeScript Powered MicroServices</h1><p>About 8 minutes to read</p><hr/></header><ul id="toc" class="serum-toc"><li class="indent-0"><a href="#tl;dr"><span class="number">1</span>TL;DR</a></li><li class="indent-0"><a href="#graph-databases"><span class="number">2</span>Graph Databases</a></li><li class="indent-1"><a href="#better-mental-modeling"><span class="number">2.1</span>Better Mental Modeling</a></li><li class="indent-1"><a href="#graph-algorithms"><span class="number">2.2</span>Graph Algorithms</a></li><li class="indent-0"><a href="#separate-data-access-layer-(dal)"><span class="number">3</span>Separate Data Access Layer (DAL)</a></li><li class="indent-0"><a href="#our-first-typescript-foxx-microservice"><span class="number">4</span>Our First TypeScript Foxx Microservice</a></li><li class="indent-1"><a href="#project-structure"><span class="number">4.1</span>Project Structure</a></li><li class="indent-1"><a href="#setting-up-the-service"><span class="number">4.2</span>Setting Up The Service</a></li><li class="indent-1"><a href="#creating-a-custom-route"><span class="number">4.3</span>Creating A Custom Route</a></li><li class="indent-0"><a href="#next-steps"><span class="number">5</span>Next Steps</a></li><li class="indent-0"><a href="#conclusion"><span class="number">6</span>Conclusion</a></li><li class="indent-0"><a href="#references"><span class="number">7</span>References</a></li></ul><h2 id="tl;dr">TL;DR</h2><ul><li><p><a href="https://arangodb.com">ArangoDB</a> is a multi-model database supporting Key/Value, Document, and Graph models with one unifying query language.</p></li><li><p><a href="https://www.arangodb.com/docs/stable/foxx.html">Foxx Microservices</a> are Arango’s way of writing separate data access and domain logic code running directly within the database with native access to in-memory data.</p></li><li><p><a href="https://github.com/SquashConsulting/foxx_typescript">Foxx TypeScript</a> is an <a href="https://arangodb.com">ArangoDB</a> Foxx service template that lets you write testable, typescript powered microservices.</p></li><li><p><a href="https://github.com/rasjonell/foxx_ts_demo">foxx_ts_demo</a> is the source code of the tutorial in this article.</p></li></ul><h2 id="graph-databases">Graph Databases</h2><p>Graph databases caught my interest and I’ve been experimenting with them for a couple of months now. This a very broad topic that does not really belong to this article so I’m just going to demonstrate why I choose to work with this model with a couple of key points:</p><h3 id="better-mental-modeling">Better Mental Modeling</h3><p>As an example let’s think about a basic social media interaction. At the core all we need is <code class="inline">user follows user</code>. With traditional “relational” databases you’d need to create a through table that holds foreign-keys to represent this many-to-many relationship. This itself is already unnecessarily complicated, but what if we introduce posts, reactions, etc. In order to fetch posts only from users that the current user follows you’d need to do expensive multiple joins and possibly sub-queries.</p><p>However with graphs it is as simple as stating the relationship.
+<img src="/media/user_user.png" alt="Graph representation of user follows user relationship"/>
+This image is the actual representation of this relationship. Having this simplicity is essential both for modeling your business logic and communicating it across different teams in your company.</p><h3 id="graph-algorithms">Graph Algorithms</h3><p><a href="https://en.m.wikipedia.org/wiki/Graph_theory">Graph Theory</a> is the study of graphs. There are a number of well-known algorithms and techniques that help us conduct efficient data analysis and enable us to create personalized suggestions.
+This example from <a href="https://aws.amazon.com/neptune/">Amazon Neptune</a> shows how having your data model in such form makes it really intuitive and straightforward to generate suggestions and make your platform more personalized.</p><p><img src="/media/amazon_graph.png" alt="Graph model representing personalized suggestions"/></p><h2 id="separate-data-access-layer-(dal)">Separate Data Access Layer (DAL)</h2><p>For projects that are relatively big and/or heavily data-reliant it makes sense to separate your Data Access Layer(DAL) from your API. It is also widely accepted to have a separate Business Logic Layer(BLL).</p><p>ArangoDB is a relatively new database and is being rapidly developed. Recently it was <a href="https://www.g2.com/categories/graph-databases?utm_campaign=G2Crowd%20Reviews&amp;utm_content=107517797&amp;utm_medium=social&amp;utm_source=twitter&amp;hss_channel=tw-398200139">communally voted</a> as the number 1 graph database. Currently there are not many ORMs(or OGMs) supporting Arango. Because of this I tried finding the right way of accessing my data layer. This is when I came across Foxx Microservices.</p><p>Foxx Microservices are Arango’s way of writing separate data access and domain logic code running directly within the database with native access to in-memory data.</p><blockquote><p>Foxx services consist of JavaScript code running in the V8 JavaScript runtime embedded inside ArangoDB. Each service is mounted in each available V8 context (the number of contexts can be adjusted in the server configuration). Incoming requests are distributed across these contexts automatically.</p></blockquote><p>Essentially ArangoDB offers a REST API to communicate with the database. So what ORMs(or OGMs) do is introduce an abstraction over these APIs to be used in your client. Foxx Microservices can be used to extend this API. Your Business Logic Layer then can directly call the extended database API instead of a separate service that does not have direct access to the database. Thus, using Foxx as your DAL not only offers modularity and long-term maintainability but also ensures the best possible performance.</p><h2 id="our-first-typescript-foxx-microservice">Our First TypeScript Foxx Microservice</h2><p>We’ve created an ArangoDB 🥑 Foxx Microservice template supporting TypeScript and Yarn &gt;= 2.0. Navigate to this link <a href="https://github.com/SquashConsulting/foxx_typescript/generate">https://github.com/SquashConsulting/foxx_typescript/generate</a> to generate your first Foxx Microservice with our TypeScript template.</p><p>In order to follow the rest of the article make sure you have arangodb running locally and have <a href="https://github.com/arangodb/foxx-cli">foxx-cli</a> set up.</p><h3 id="project-structure">Project Structure</h3><pre><code class="">├── LICENSE
+├── README.md
+├── manifest.json
+├── package.json
+├── src
+│   ├── entry.ts
+|   └── scripts
+│       ├── setup.ts
+│   └── routes
+│       ├── hello.ts
+│       └── index.ts
+├── test
+├── tsconfig.json
+└── yarn.lock</code></pre><p>If you have your foxx-cli installed and set up, then in order to use the typescript service in ArangoDB, you need to run <code class="inline">yarn build</code> and then do <code class="inline">foxx install &lt;mount&gt; --server &lt;server_name&gt; --database &lt;db_name&gt;</code></p><p><strong>NOTE: </strong><em>this template uses yarn &gt;= 2.0, so please make sure you go through the instructions in the template README to complete your setup.</em></p><p>This will extend your database API by adding a <code class="inline">/hello</code> route that simply returns hello world.</p><h3 id="setting-up-the-service">Setting Up The Service</h3><p>The template project comes with <code class="inline">@types/arangodb</code> package. So you can already use them in your project.</p><p>Let’s write another route that inserts user data in the database.</p><p>First of all we need to create a setup script that creates the necessary collections for us.</p><p>inside <code class="inline">src/scripts/setup.ts</code> write this:</p><pre><code class="ts">import { db } from &quot;@arangodb&quot;;
+
+const documents: [string] = [&quot;users&quot;];
+
+documents.forEach((collection: string): void =&gt; {
+  if (!db._collection(collection)) {
+    db._createDocumentCollection(collection);
+  } else if (module.context.isProduction) {
+    console.debug(
+      `collection ${collection} already exists. Leaving it untouched.`
+    );
+  }
+});</code></pre><p>Then update your <code class="inline">manifest.json</code> to run this script.</p><pre><code class="json">/* ... */
+&quot;scripts&quot;: {
+  &quot;setup&quot;: &quot;dist/scripts/setup.js&quot;
+},
+/* ... */</code></pre><p>Notice how we use dist instead of src to tell aranago to run the bundled commonjs code instead of typescript.</p><p>After this you can finally install your service using <code class="inline">foxx-cli</code></p><pre><code class="sh">$ yarn build
+...
+
+$ foxx install /foxx_ts_demo --server squash --database squash
+
+Installed service at &quot;/foxx_ts_demo&quot;.</code></pre><p>Notice that I installed the service on <code class="inline">/foxx_ts_demo</code> using the server <code class="inline">squash</code> and the homonym database that I configured using the <code class="inline">foxx-cli</code></p><p>Now if you navigate to ArangoDB’s WebView(default is <a href="http://localhost:8529">http://localhost:8529</a>) choose the database you configured you will see <code class="inline">users</code> collection.</p><p>This happened because <code class="inline">setup</code> is one of Foxx lifecycle scripts. For more info refer to the <a href="https://www.arangodb.com/docs/3.7/foxx-guides-scripts.html#lifecycle-scripts">official docs</a>.</p><h3 id="creating-a-custom-route">Creating A Custom Route</h3><p>Now that we have everything set up, we can move forward and create our first ever typescript API!</p><p>You can see the example route in <code class="inline">src/routes/hello.ts</code>.
+Before we extend this with a POST request that creates a user, let’s update our setup script to add unique index on the <code class="inline">username</code> field.</p><pre><code class="ts">// src/scripts/setup.ts
+/* ... */
+
+const users: ArangoDB.Collection = db.users;
+
+users.ensureIndex({
+  unique: true,
+  type: &quot;hash&quot;,
+  fields: [&quot;username&quot;]
+});</code></pre><p>Now we can add the route:</p><pre><code class="ts">// src/routes/hello.ts
+import joi from &quot;joi&quot;;
+import { db } from &quot;@arangodb&quot;;
+
+interface IUser extends ArangoDB.Document {
+  email?: string;
+  username?: string;
+}
+
+router
+  .post(&quot;/user&quot;, function(req: Foxx.Request, res: Foxx.Response) {
+    try {
+      const user: IUser = req.body;
+
+      const users: ArangoDB.Collection = db.users;
+
+      const meta: IUser = users.save(user);
+      const data: IUser = { ...user, ...meta };
+
+      res.send({ data });
+    } catch (e) {
+      // Failed to save the user
+      // We&apos;ll assume the uniqueness constraint has been violated
+      res.throw(&quot;bad request&quot;, &quot;Username already taken&quot;, e);
+    }
+  })
+  .body(
+    joi
+      .object({
+        email: joi.string().required(),
+        username: joi.string().required()
+      })
+      .required(),
+    &quot;User Info&quot;
+  )
+  .description(&quot;Creates a new user.&quot;);</code></pre><p>The combination of TypeScript and joi validations makes this code pretty self-explanatory. We take the user data from the request save it in the collection and return it with additional data.</p><p>If you navigate to Arango WebView’s Services tab you will see your service. Click on the service. There are three main sections:</p><ul><li>Info - Your README.md file.
+</li><li>API - We used joi to define our APIs this helps Arango to generate <a href="https://swagger.io/">Swagger</a> API definitions for us.
+</li><li>Settings - Your service configurations(Will talk about this later)
+</li></ul><p>Now If you go the the API tab, you will see the newly created <code class="inline">POST /user</code> API, expanding it will reveal the API options with an additional option to try the API directly from the web view.</p><p><img src="/media/arango_service.png" alt="Screenshot of ArangoDB Services Web View"/></p><p>Give it a try and create a user. After successfully creating the user, the API will respond with <code class="inline">200 OK</code> and send the user data back. If you try to create a user with the same username the API should respond with <code class="inline">400 Bad Request</code> and error massage that states that the username is already in use.</p><h2 id="next-steps">Next Steps</h2><p>I hope I’ve succeeded in convincing you to give ArangoDB and Foxx Microservices a try. If you do so, you’ll discover a lot more than I’ve managed to cover in this article. My favorite Foxx features are <a href="https://www.arangodb.com/docs/3.7/foxx-guides-dependencies.html">Linking Services</a> together and making them <a href="https://www.arangodb.com/docs/3.7/foxx-reference-configuration.html">configurable</a>.</p><p>You can checkout <a href="https://github.com/SquashConsulting/foxx_services">https://github.com/SquashConsulting/foxx_services</a> to see how we used both of these(and other cool) features to create a separate Data Access Layer with <a href="https://github.com/SquashConsulting/shared">shared</a> utils where you can define your configurations and have all the other linked services be generic.</p><h2 id="conclusion">Conclusion</h2><p>To wrap things up, separating your Data Access Layer(DAL) from your Business Logic Layer(BLL) is a technique that results in maintainable and modular code-base. Using ArangoDB Foxx with Typescript and joi validations to accomplish this provides additional benefits such as configurable, performant, and type-safe microservices.</p><p>If you liked this article consider following me on <a href="https://թութ.հայ/@gurgen">Mastodon</a> or Twitter <a href="https://twitter.com/iRasjonell">@irasjonell</a> and maybe starring the repos used in this article.</p><h2 id="references">References</h2><ul><li><a href="https://github.com/rasjonell/foxx_ts_demo">foxx_ts_demo</a> - The source code of the tutorial in this article.
+</li><li><a href="https://github.com/SquashConsulting/foxx_typescript">Foxx TypeScript</a> - The typescript template project
+</li><li><a href="https://github.com/SquashConsulting/foxx_services">Foxx Services</a> - Foxx services meta repo
+</li><li><a href="https://github.com/arangodb/arangodb">ArangoDB</a> - ArangoDB source code
+</li></ul></div></article></main>
+      <hr>
+      <footer>
+        
+
+<p>
+  Copyright &copy; 2020 Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.3.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>
+]]></description>
+  <pubDate>Thu, 28 May 20 15:44:50 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</guid>
 </item>
 <item>
   <title>Setting Up My Personal Blog</title>
-  <description><![CDATA[Getting the domain Just like with any other side project of yours, the first thing you do is getting a domain. As a part of my GitHub Education Pack I got a number of options for free domain registration. As I had previously used the services of GoDaddy…]]></description>
-  <pubDate>Thu, 28 May 20 15:28:42 +0000</pubDate>
+  <description><![CDATA[
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Setting Up My Personal Blog - {:ok, :rasjonell}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<meta name="twitter:site" content="@irasjonell">
+<meta name="twitter:creator" content="@irasjonell">
+<meta name="twitter:image" content="https://rasjonell.tech/assets/images/me.jpg">
+
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://rasjonell.tech/assets/images/me.jpg" />
+<meta property="og:site_name" content="Rasjonell Tech" />
+
+<style>
+  .contacts {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .gig {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .list {
+    margin: 0;
+  }
+
+  .full-width: {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+<h1><a href="/">{:ok, :rasjonell}</a></h1>
+<p>Yinging and yanging noided</p>
+</header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/rss.xml">RSS Feed</a></li>
+  <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
+  <li><a href="/assets/cv.pdf" target="_blank">Read My CV</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><article><div><header><h1 id="setting-up-my-personal-blog">Setting Up My Personal Blog</h1><p>About 3 minutes to read</p><hr/></header><ul id="toc" class="serum-toc"><li class="indent-0"><a href="#getting-the-domain"><span class="number">1</span>Getting the domain</a></li><li class="indent-0"><a href="#creating-the-blog"><span class="number">2</span>Creating the blog</a></li><li class="indent-0"><a href="#hosting-the-blog"><span class="number">3</span>Hosting the blog</a></li><li class="indent-0"><a href="#automating-the-blog"><span class="number">4</span>Automating the blog</a></li></ul><p><ul id="toc" class="serum-toc"><li class="indent-0"><a href="#getting-the-domain"><span class="number">1</span>Getting the domain</a></li><li class="indent-0"><a href="#creating-the-blog"><span class="number">2</span>Creating the blog</a></li><li class="indent-0"><a href="#hosting-the-blog"><span class="number">3</span>Hosting the blog</a></li><li class="indent-0"><a href="#automating-the-blog"><span class="number">4</span>Automating the blog</a></li></ul></p><h2 id="getting-the-domain">Getting the domain</h2><p>Just like with any other side project of yours, the first thing you do is getting a domain.</p><p>As a part of my <a href="https://education.github.com/">GitHub Education Pack</a> I got a number of options for free domain registration. As I had previously used the services of <a href="https://godaddy.com">GoDaddy</a> and <a href="http://namecheap.com">NameCheap</a> I decided to go with <a href="https://get.tech">GetTech</a>.</p><p>Fortunately <code class="inline">rasjonell.tech</code> was not taken and with a couple of clicks the domain was mine.
+Apart from the fact the UI/UX for the Admin Area is horrendous, GetTech provides a number of cool <em>free</em> services. These include:</p><ul><li>Email Service (with OX App Suite Webmail)
+</li><li>Domain Forwarding
+</li><li>DNS Management
+</li></ul><h2 id="creating-the-blog">Creating the blog</h2><p>I didn’t have time to create something of my own so I had to look for help from the community. There are a lot(actually more then necessary) of static site generators. There was no way I was going to use any JS “powered” tool so I narrowed down my options to only three SSGs:</p><ul><li><a href="https://github.com/BennyHallett/obelisk">Obelisk</a></li><li><a href="https://www.romanzolotarev.com/ssg.html">SSG by Roman Zolotarev</a></li><li><a href="https://github.com/Dalgona/Serum">Serum</a></li></ul><p>As a huge fan of <a href="https://elixir-lang.org">Elixir</a> I looked for projects written in Elixir to possibly contribute and have a rest from the JavaScripts I have to deal with every day. Obelisk was the first thing I found, however going to the issues tab on GitHub I found this:</p><p><img src="/media/obelisk_issue.png" alt="Obelisk Issue"/></p><p>So I had to make a choice between SSG and Serum. Writing this I figured out that there is no rational(or should I say <em>rasjonell</em> 🤔) reason for choosing any other software instead of SSG but my love for declarative programming and good ol’ memories of ruby-ish syntax made me choose Serum.</p><p>Setting up the project was as straightforward as it could be. You download the software, compile it and there you go. I also installed a custom theme, for which I had to change a single line in my config file(I’m thinking of forking this theme to add a dark mode). Refer to the <a href="https://dalgona.github.io/Serum/getting-started.html">official guide</a> for more detailed introduction.</p><h2 id="hosting-the-blog">Hosting the blog</h2><p>Unlike my experience with choosing a static site generator, hosting was an easy and obvious decision. I used to use a number of hosting services and was mostly happy with <a href="https://zeit.co">Zeit’s</a> “0-config deployments”, until I actually needed to config my deployment. That’s when I faced an issue, didn’t care enough to investigate it and moved to <a href="https://www.netlify.com/">Netlify</a>. I just magically lived happily ever after.</p><p>Serum produces a static HTML/CSS website so you can just <code class="inline">netlify deploy site</code>. That’s it. Problem solved.</p><h2 id="automating-the-blog">Automating the blog</h2><p>I already had a personal website hosted on Github so I just abandoned it and force pushed this newer, better one. But I didn’t want to manually build and the deploy the site every time I made changes so I set up git hooks with <a href="https://github.com/sds/overcommit">overcommit</a> to run <code class="inline">mix serum.build</code> before pushing the code.</p><p>After that I configured my Netlify(❤️) project to automatically build from the master branch of my repo.</p><p>All of this is already cool enough and I really enjoyed making it. But I was thinking of making a local CMS-like environment where you just have a rich text editor and a couple of cool looking buttons for publishing or perhaps saving your blog-post as draft. However I couldn’t justify this need and didn’t make it. If you think it’ll be cool to have such a tool or have any ideas or suggestions contact me on <a href="https://xn--69aa8bzb.xn--y9a3aq/@gurgen">Mastodon</a> or just email me@rasjonell.tech</p></div></article></main>
+      <hr>
+      <footer>
+        
+
+<p>
+  Copyright &copy; 2020 Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.3.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>
+]]></description>
+  <pubDate>Thu, 28 May 20 15:44:50 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</link>
   <guid>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</guid>
 </item>

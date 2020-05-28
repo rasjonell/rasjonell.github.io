@@ -49,7 +49,7 @@ defmodule Blog.Rss do
   def build_succeeded(_src, dest, _args) do
     rss_feed = :all_posts
       |> GlobalBindings.get()
-      |> build_feed()
+      |> build_feed(dest)
 
     dest
     |> create_file(rss_feed)
@@ -58,8 +58,8 @@ defmodule Blog.Rss do
     :ok
   end
 
-  defp build_feed(posts) do
-    items = posts |> Enum.map(&__MODULE__.generate_item_from_post/1)
+  defp build_feed(posts, dest) do
+    items = posts |> Enum.map(&(generate_item_from_post(&1, dest)))
     feed(channel(), items)
   end
 
@@ -70,13 +70,19 @@ defmodule Blog.Rss do
     }
   end
 
-  def generate_item_from_post(post) do
-    # maybe read the file and render html as the desc?
+  defp generate_item_from_post(post, dest) do
     title = post.title
-    desc = post.preview
     link = "#{@url}#{post.url}"
+    desc = get_full_content(post, dest)
 
     item(title, desc, link)
+  end
+
+  defp get_full_content(post, dest) do
+    src = Path.join(dest, post.url)
+    {:ok, file} = %Serum.File{src: src} |> Serum.File.read()
+
+    file.in_data
   end
 
   defp feed(channel, items) do

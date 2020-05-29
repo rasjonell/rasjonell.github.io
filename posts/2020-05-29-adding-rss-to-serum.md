@@ -9,11 +9,11 @@ template: doc
 
 I decided not to talk about the importance, simplicity, and necessity of having an RSS feed for your website. So I'm just going to demonstrate how I made a plugin for [Serum](https://github.com/Dalgona/Serum), the static site generator tool(written in Elixir), that I use for this blog.
 
-Serum has a plugin system. For example the Table Of Contents at the top of the article was generated with a plugin. They have a Plugin [Behaviours](https://elixir-lang.org/getting-started/typespecs-and-behaviours.html#behaviours) which you can use to define your own plugin module.
+Serum has a plugin system. For example the Table Of Contents at the top of the article was generated with a plugin. They have a Plugin [Behaviour](https://elixir-lang.org/getting-started/typespecs-and-behaviours.html#behaviours) which you can use to define your own plugin module.
 
 ### Serum.Plugin
 
-Serum exposes a number of events(full list can be found [here](https://hexdocs.pm/serum/Serum.Plugin.html#content)) which you can handle. The one I find most useful for the RSS feed generator is `build_succeeded/3`. This particular event is triggered when, as the name suggests, the build step succeeds. After a successfull build we want to update our RSS feed so the subscribers can get notified about new posts!
+Serum exposes a number of events(full list can be found [here](https://hexdocs.pm/serum/Serum.Plugin.html#content)) which you can handle. The one I find most useful for the RSS feed generator is `build_succeeded/3`. This particular event is triggered when, as the name suggests, the build step succeeds. After a successful build we want to update our RSS feed so the subscribers can get notified about new posts!
 
 First we need some boilerplate to correctly implement the `Serum.Plugin` behavour.
 
@@ -76,7 +76,7 @@ So what are the things that need to be wrapped.
 ### Channels
 
 Remember the module attributes? We need them to define our channel.
-We can define a simple function that that return all the necessary tags with up-to-date information.
+We can define a simple function that returns all the necessary tags with up-to-date information.
 
 ```elixir
 defp channel do
@@ -90,7 +90,7 @@ defp channel do
 end
 ```
 
-See the call to `current_date/0` there? This was the most painful part of developing this plugin. RSS requires dates in the RFC-822 format but Elixir's date-related, undertandably, don't come with built-in formatting options. So I had to install a dependancy. Timex is the library I chose, as it also is a dependancy of Serum, so I wouldn't add any more code to the final bundle.
+See the call to `current_date/0` there? This was the most painful part of developing this plugin. RSS requires dates in the RFC-822 format but Elixir's date-related modules, understandably, don't come with built-in formatting options. So I had to install a dependancy. Timex is the library I chose, as it also is a dependancy of Serum, so I wouldn't add any more code to the final bundle.
 
 The `current_date/0` function has this definition:
 ```elixir
@@ -156,6 +156,6 @@ def build_succeeded(_src, dest, _args) do
 end
 ```
 
-I'll let Elixirs **beautiful** pipe operator to the explaining here.
+I'll let Elixirs **beautiful** pipe operator do the explaining here.
 
-If you want to use this plugin or just check the final code checkout the [source code](https://github.com/rasjonell/rasjonell.github.io/blob/master/lib/blog/rss.ex)
+If you want to use this plugin or just check the final code checkout the [source code](https://github.com/rasjonell/rasjonell.github.io/blob/master/lib/blog/rss.ex).

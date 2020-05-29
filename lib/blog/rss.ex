@@ -1,6 +1,6 @@
 defmodule Blog.Rss do
-    @moduledoc """
-  A Serum plugin that create a sitemap so that the search engine can index posts.
+  @moduledoc """
+  A Serum plugin that generates an RSS feed.
 
   ## Using the Plugin
 
@@ -47,12 +47,10 @@ defmodule Blog.Rss do
 
   @impl true
   def build_succeeded(_src, dest, _args) do
-    rss_feed = :all_posts
-      |> GlobalBindings.get()
-      |> build_feed(dest)
-
-    dest
-    |> create_file(rss_feed)
+    :all_posts
+    |> GlobalBindings.get()
+    |> build_feed(dest)
+    |> create_file(dest)
     |> File.write()
 
     :ok
@@ -63,7 +61,7 @@ defmodule Blog.Rss do
     feed(channel(), items)
   end
 
-  defp create_file(dest, rss_feed) do
+  defp create_file(rss_feed, dest) do
     %File{
       out_data: rss_feed,
       dest: Path.join(dest, "rss.xml")
@@ -90,7 +88,9 @@ defmodule Blog.Rss do
     <?xml version="1.0" encoding="utf-8"?>
     <rss version="2.0">
     <channel>
-    #{channel}#{Enum.join items, ""}</channel>
+      #{channel}
+      #{Enum.join items, ""}
+    </channel>
     </rss>
     """
   end

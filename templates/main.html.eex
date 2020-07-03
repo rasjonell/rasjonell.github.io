@@ -1,6 +1,7 @@
 <%= @contents %>
 <%
   tags = @all_tags
+    |> Enum.sort(fn ({_, count1}, {_, count2}) -> count2 <= count1 end)
     |> Enum.map(fn {tag, count} -> """
       <a title="#{tag.name} - #{count}" href="#{tag.list_url}">
         #{tag.name}

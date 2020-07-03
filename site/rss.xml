@@ -4,7 +4,7 @@
     <title>Rasjonell's Blog</title>
   <link>https://www.rasjonell.tech</link>
   <description>Random rants about technology</description>
-  <lastBuildDate>Thu, 02 Jul 20 23:43:03 +0000</lastBuildDate>
+  <lastBuildDate>Fri, 03 Jul 20 00:04:47 +0000</lastBuildDate>
   <language>en-us</language>
 
   <item>
@@ -48,6 +48,12 @@
   .contacts {
     display: flex;
     justify-content: space-evenly;
+  }
+
+  .tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .gig {
@@ -221,7 +227,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Thu, 02 Jul 20 23:43:03 +0000</pubDate>
+  <pubDate>Fri, 03 Jul 20 00:04:47 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-05-29-adding-rss-to-serum.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-05-29-adding-rss-to-serum.html</guid>
 </item>
@@ -266,6 +272,12 @@ function onClose(e) {
   .contacts {
     display: flex;
     justify-content: space-evenly;
+  }
+
+  .tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .gig {
@@ -408,7 +420,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Thu, 02 Jul 20 23:43:03 +0000</pubDate>
+  <pubDate>Fri, 03 Jul 20 00:04:47 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</guid>
 </item>
@@ -453,6 +465,12 @@ function onClose(e) {
   .contacts {
     display: flex;
     justify-content: space-evenly;
+  }
+
+  .tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .gig {
@@ -628,7 +646,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Thu, 02 Jul 20 23:43:03 +0000</pubDate>
+  <pubDate>Fri, 03 Jul 20 00:04:47 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</guid>
 </item>
@@ -673,6 +691,12 @@ function onClose(e) {
   .contacts {
     display: flex;
     justify-content: space-evenly;
+  }
+
+  .tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .gig {
@@ -763,7 +787,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Thu, 02 Jul 20 23:43:03 +0000</pubDate>
+  <pubDate>Fri, 03 Jul 20 00:04:47 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</link>
   <guid>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</guid>
 </item>

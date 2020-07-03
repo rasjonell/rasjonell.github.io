@@ -24,7 +24,7 @@
 <hr>
 <div>
   <h2>Read My Posts About: </h2>
-  <div class="tags">
+  <div class="tags-internal">
     <%= tags %>
   </div>
 </div>

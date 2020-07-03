@@ -1,42 +1,45 @@
 <%= @contents %>
 <%
   tags = @all_tags
-    |> Enum.map(fn {tag, _} -> """
-      <a href="#{tag.list_url}">
+    |> Enum.map(fn {tag, count} -> """
+      <a title="#{tag.name} - #{count}" href="#{tag.list_url}">
         #{tag.name}
       </a>
-    """ end)
+      """ end)
     |> Enum.join("|")
 
   latest_post = hd @all_posts
 %>
 
 <div>
-<h2>Read My Latest Post</h2>
+  <h2>Read My Latest Post</h2>
   <a href="<%= latest_post.url %>">
     <h3><%= latest_post.title %></h3>
   </a>
+  <p>
+    <%= latest_post.preview %>
+  </p>
 </div>
 <hr>
 <div>
   <h2>Read My Posts About: </h2>
-  <%= tags %>
+  <div class="tags">
+    <%= tags %>
+  </div>
 </div>
 <hr/>
 <div class="contacts">
   <div class="gig">
-    <div class="gig">
-      <h2>Email Me For A Project</h2>
-      <ul class="list">
-        <li><a href="mailto:me@xn--09aag2eh2cn.xn--y9a3aq">me@գուրգեն.հայ</a></li>
-      </ul>
-    </div>
-    <div class="gig">
-      <h2>Find Me On Social Media</h2>
-      <ul class="list">
-        <li><a href="https://թութ.հայ/@gurgen" target="_blank">գուրգեն@թութ.հայ</a> (Mastodon)</li>
-        <li><a href="https://spyurk.am/people/49d681f00fff01366a0c746d04923301" target="_blank">rasjonell@spyurk.am</a> (Diaspora*)</li>
-      </ul>
-    </div>
+    <h2>Email Me For A Project</h2>
+    <ul class="list">
+      <li><a href="mailto:me@xn--09aag2eh2cn.xn--y9a3aq">me@գուրգեն.հայ</a></li>
+    </ul>
+  </div>
+  <div class="gig">
+    <h2>Find Me On Social Media</h2>
+    <ul class="list">
+      <li><a href="https://թութ.հայ/@gurgen" target="_blank">գուրգեն@թութ.հայ</a> (Mastodon)</li>
+      <li><a href="https://spyurk.am/people/49d681f00fff01366a0c746d04923301" target="_blank">rasjonell@spyurk.am</a> (Diaspora*)</li>
+    </ul>
   </div>
 </div>

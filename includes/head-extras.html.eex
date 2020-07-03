@@ -29,6 +29,12 @@
     justify-content: space-evenly;
   }
 
+  .tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
   .gig {
     display: flex;
     align-items: center;

@@ -4,10 +4,236 @@
     <title>Rasjonell's Blog</title>
   <link>https://www.rasjonell.tech</link>
   <description>Random rants about technology</description>
-  <lastBuildDate>Fri, 03 Jul 20 00:12:37 +0000</lastBuildDate>
+  <lastBuildDate>Wed, 08 Jul 20 15:33:45 +0000</lastBuildDate>
   <language>en-us</language>
 
   <item>
+  <title>Type Safe Module Decorators In Typescript</title>
+  <description><![CDATA[
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Type Safe Module Decorators In Typescript - {:ok, :rasjonell}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<meta name="twitter:site" content="@irasjonell">
+<meta name="twitter:creator" content="@irasjonell">
+<meta name="twitter:image" content="https://rasjonell.tech/assets/images/me.jpg">
+
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://rasjonell.tech/assets/images/me.jpg" />
+<meta property="og:site_name" content="Rasjonell Tech" />
+
+<style>
+  .contacts {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .tags-internal {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .gig {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .list {
+    margin: 0;
+  }
+
+  .full-width: {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+<h1><a href="/">{:ok, :rasjonell}</a></h1>
+<p>Yinging and yanging noided</p>
+</header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/rss.xml">RSS Feed</a></li>
+  <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
+  <li><a href="/assets/cv.pdf" target="_blank">Read My CV</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><article><div><header><h1 id="type-safe-module-decorators-in-typescript">Type Safe Module Decorators In Typescript</h1><p>About 5 minutes to read</p><hr/></header><ul id="toc" class="serum-toc"><li class="indent-0"><a href="#problem"><span class="number">1</span>Problem</a></li><li class="indent-0"><a href="#approach"><span class="number">2</span>Approach</a></li><li class="indent-0"><a href="#solution"><span class="number">3</span>Solution</a></li><li class="indent-1"><a href="#utility-types"><span class="number">3.1</span>Utility Types</a></li><li class="indent-1"><a href="#typesafe-decorator"><span class="number">3.2</span>TypeSafe Decorator</a></li><li class="indent-0"><a href="#links"><span class="number">4</span>Links</a></li></ul><h2 id="problem">Problem</h2><p>I was working on <a href="https://github.com/SquashConsulting/rss-reader-backend">SquashReader</a> and realized that I wanted to make my services pluggable, meaning that with an environment variable a user may enable or disable a particular service. For example, I have a Daemon service that, when called, creates a background job that repeatedly fetches new RSS Feed updates.</p><p>The whole application does not depend on this service and if you decide that you do not want recurrent updates you will be
+able to just disable that service and expect everything to work as expected.</p><h2 id="approach">Approach</h2><p>To enable this feature, I decided to use the <a href="">Decorator Pattern</a>.
+Before going into the solution let me illustrate how my services are architected, so we can see what options we have.</p><p>First let’s take a look at the Daemon service:</p><pre><code class="typescript">// services/daemon.ts
+
+export default {
+  createJob,
+};
+
+function createJob(feed: Document&lt;Repo.Feed&gt;): void {
+  DB.runService(MOUNT, SCRIPT, [feed]);
+}</code></pre><p>This module is then used by my <code class="inline">FeedController</code> to create background jobs on feed creation:</p><pre><code class="typescript">// controllers/feed.ts
+
+import Daemon from &apos;services/feed&apos;;
+
+// ...
+
+async function Create(req: Request, res: Resonse): Promise&lt;void&gt; {
+  /**
+   * Handling Feed creation 
+   */
+
+  Daemon.createJob(feed);
+}
+</code></pre><p>Because of the nature of my Services, using classes would not make sense as the only class feature that I’d be using would be code organization which can simply be achieved with modules. I mention this, as if I used classes I could use <a href="https://www.typescriptlang.org/docs/handbook/decorators.html">Typescript Decorators</a>.</p><p>That leaves us with the option of creating a decorator function that will take our module and return a modified version of it that holds our desired logic.</p><p>Let’s implement it!</p><pre><code class="typescript">// decorators/service.ts
+
+export default function decorateService(ENV: string, Service) {
+  const condition = ENV === &quot;true&quot;;
+
+  for (const key in Service) {
+    Service[key] = function () {
+      if (condition) {
+        return Service[key].apply(this, arguments);
+      } else {
+        console.warn(&quot;Trying to call a disabled service action:&quot;, key);
+      }
+    };
+  }
+
+  return Service;
+}</code></pre><p>And then we can use this decorator with our deamon service like so:</p><pre><code class="typescript">// services/daemon.ts
+
+import ServiceDecorator from &apos;decorators/service&apos;;
+
+export default ServiceDecorator(SOME_ENV_VAR, {
+  createJob,
+});
+
+// ...</code></pre><p>This works fine and when we make the service disabled via an ENV variable, the decorator does its job and warns us. However, with this solution we lose all of our types!. </p><p>If we inspect our imported Daemon module we can see that it has an <code class="inline">any</code> type. So our decorator makes is impossible for Typescript to infer our decorated module’s types. Let’s solve this!</p><h2 id="solution">Solution</h2><p>Before we write our generic decorator that persists the types of its given Service, let’s take a look at what Typescript gives us to solve this problem.</p><h3 id="utility-types">Utility Types</h3><p>Typescript has a bunch of <a href="">Utility Types</a>. These types help us to do a bunch of type transformations.</p><p>For example if we have an interface that has some optional fields and we want to get a type that is basically that same interface but all the fields are required, we can use the <code class="inline">Requred&lt;T&gt;</code> Utility Type.</p><pre><code class="typescript">interface Props {
+    a?: number;
+    b?: string;
+};
+
+const obj: Props = { a: 5 }; // OK
+
+const obj2: Required&lt;Props&gt; = { a: 5 }; // Error: property &apos;b&apos; missing</code></pre><h3 id="typesafe-decorator">TypeSafe Decorator</h3><p>To solve our problem we need to find a way to infer the function signitures of our module functions.
+In order to achieve this we are going to use two very useful Utility Types:</p><ul><li><code class="inline">Parameters&lt;T&gt;</code> - Constructs a tuple type of the types of the parameters of a function type <code class="inline">T</code>.
+</li><li><code class="inline">ReturnType&lt;T</code>&gt; - Constructs a type consisting of the return type of function <code class="inline">T</code>.
+</li></ul><p>First let’s create a separate function that given a Service method and a condition returns a modified version of the method that handles our desired logic.</p><pre><code class="typescript">// decorators/service.ts
+
+function decorateMethod&lt;T extends (...args: any[]) =&gt; any&gt;(
+  method: T,
+  condition: boolean,
+): (...funcArgs: Parameters&lt;T&gt;) =&gt; ReturnType&lt;T&gt; {
+  return (...args: Parameters&lt;T&gt;): ReturnType&lt;T&gt; =&gt; {
+    if (condition) {
+      return method(...args);
+    } else {
+      console.warn(&quot;Trying to a call a disabled service action:&quot;, method.name);
+    }
+  };
+}</code></pre><p>Notice how we utilize the above-mentioned Utility Types to persist the type signiture of Service actions.</p><p>Next we need a service-decorator function that given a service module returns a modified module that has the exact same keys as the service but the corresponding values are decorated using the function above.</p><pre><code class="typescript">// decorators/service.ts
+
+type DecoratedService&lt;T extends { [key: string]: (...args: any[]) =&gt; any }&gt; = {
+  [key in keyof T]: (...args: Parameters&lt;T[key]&gt;) =&gt; ReturnType&lt;T[key]&gt;;
+};
+
+export default function decorateService&lt;
+  T extends { [key: string]: (...args: any[]) =&gt; any }
+&gt;(ENV: string, Service: T): DecoratedService&lt;T&gt; {
+  const condition = ENV === &quot;true&quot;;
+
+  let tempObj: { [key: string]: any } = {};
+
+  for (const key in Service) {
+    tempObj[key] = decorateMethod(Service[key], condition);
+  }
+
+  return tempObj as DecoratedService&lt;T&gt;;
+}</code></pre><p>Thats it! now if go to our controller and inspect the imported Daemon module we can see that all the functions kept their original signitures:</p><p><img src="/media/inspect-1.png" alt="ServiceDecorator"/><img src="/media/inspect-2.png" alt="Daemon Module"/></p><h2 id="links">Links</h2><p>This project is a part of SquashReader, a modern, federated, collaborative RSS reader.</p><p>You can check out the source code <a href="https://github.com/SquashConsulting/SquashReader">here</a>.
+The code for this article is located in the <code class="inline">backend</code> submodule.</p></div></article></main>
+      <hr>
+      <footer>
+        
+
+<p>
+  Copyright &copy; 2020 Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.3.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>
+]]></description>
+  <pubDate>Wed, 08 Jul 20 15:33:45 +0000</pubDate>
+  <link>https://www.rasjonell.tech/posts/2020-07-08-type-safe-module-decorator.html</link>
+  <guid>https://www.rasjonell.tech/posts/2020-07-08-type-safe-module-decorator.html</guid>
+</item>
+<item>
   <title>Adding RSS Feed To Serum Static Site Generator</title>
   <description><![CDATA[
 <!doctype html>
@@ -227,7 +453,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Fri, 03 Jul 20 00:12:37 +0000</pubDate>
+  <pubDate>Wed, 08 Jul 20 15:33:45 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-05-29-adding-rss-to-serum.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-05-29-adding-rss-to-serum.html</guid>
 </item>
@@ -420,7 +646,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Fri, 03 Jul 20 00:12:37 +0000</pubDate>
+  <pubDate>Wed, 08 Jul 20 15:33:45 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-03-26-awk_to_csv.html</guid>
 </item>
@@ -646,7 +872,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Fri, 03 Jul 20 00:12:37 +0000</pubDate>
+  <pubDate>Wed, 08 Jul 20 15:33:45 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</link>
   <guid>https://www.rasjonell.tech/posts/2020-02-03-foxx-typescript.html</guid>
 </item>
@@ -787,7 +1013,7 @@ function onClose(e) {
 }
 </script>
 ]]></description>
-  <pubDate>Fri, 03 Jul 20 00:12:37 +0000</pubDate>
+  <pubDate>Wed, 08 Jul 20 15:33:45 +0000</pubDate>
   <link>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</link>
   <guid>https://www.rasjonell.tech/posts/2019-10-01-setting-up-my-personal-blog.html</guid>
 </item>

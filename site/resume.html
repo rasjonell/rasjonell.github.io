@@ -1,0 +1,238 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Gurgen's Resume - {:ok, :rasjonell}</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/assets/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<meta name="twitter:site" content="@irasjonell">
+<meta name="twitter:creator" content="@irasjonell">
+<meta name="twitter:image" content="https://rasjonell.tech/assets/images/me.jpg">
+
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://rasjonell.tech/assets/images/me.jpg" />
+<meta property="og:site_name" content="Rasjonell Tech" />
+
+<style>
+  .contacts {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .tags-internal {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .gig {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .list {
+    margin: 0;
+  }
+
+  .full-width: {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <header id="top">
+<h1><a href="/">{:ok, :rasjonell}</a></h1>
+<p>Yinging and yanging noided</p>
+</header>
+      <nav>
+<ul>
+  <li><a href="/index.html">Home</a></li>
+  <li><a href="/posts">Posts</a></li>
+  <li><a href="/rss.xml">RSS Feed</a></li>
+  <li><a href="https://github.com/rasjonell" target="_blank">GitHub</a></li>
+  <li><a href="/assets/resume.html" target="_blank">Read My CV</a></li>
+</ul>
+</nav>
+      <hr>
+      <main><html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang=""><head><meta charset="utf-8"/><meta name="generator" content="pandoc"/><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/><title>resume</title><style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style><!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]--><style type="text/css">
+  /*
+   * Copyright 2013 Christophe-Marie Duquesne <chmd@chmd.fr>
+   *
+   * CSS for making a resume with pandoc. Inspired by moderncv.
+   *
+   * This CSS document is delivered to you under the CC BY-SA 3.0 License.
+   * https://creativecommons.org/licenses/by-sa/3.0/deed.en_US
+   */
+
+  /* Whole document */
+  body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      background: #FFFFFF;
+      padding: 10px 10px 10px 10px;
+  }
+
+  /* Title of the resume */
+  h1 {
+      font-size: 55px;
+      color: #757575;
+      text-align:center;
+      margin-bottom:15px;
+  }
+  /* h1:hover { */
+  /*     background-color: #757575; */
+  /*     color: #FFFFFF; */
+  /*     text-shadow: 1px 1px 1px #333; */
+  /* } */
+
+  /* Titles of categories */
+  h2 {
+      /* This is called "sectioncolor" in the ConTeXt stylesheet. */
+      color: #397249;
+  }
+  /* There is a bar just before each category */
+  h2:before {
+      content: "";
+      display: inline-block;
+      margin-right:1%;
+      width: 16%;
+      height: 10px;
+      /* This is called "rulecolor" in the ConTeXt stylesheet. */
+      background-color: #9CB770;
+  }
+  /* h2:hover { */
+  /*     background-color: #397249; */
+  /*     color: #FFFFFF; */
+  /*     text-shadow: 1px 1px 1px #333; */
+  /* } */
+
+  /* Definitions */
+  dt {
+      float: left;
+      clear: left;
+      width: 17%;
+      font-weight: bold;
+  }
+  dd {
+      margin-left: 17%;
+      margin-bottom:7px;
+  }
+  p {
+      margin-top:0;
+      margin-bottom:7px;
+  }
+
+  /* Blockquotes */
+  blockquote {
+      text-align: center
+  }
+
+  /* Links */
+  a {
+      text-decoration: none;
+      color: #397249;
+  }
+  a:hover, a:active {
+      background-color: #397249;
+      color: #FFFFFF;
+      text-decoration: none;
+      text-shadow: 1px 1px 1px #333;
+  }
+
+  /* Horizontal separators */
+  hr {
+      color: #A6A6A6;
+  }
+
+  table {
+      width: 100%;
+  }
+  </chmd@chmd.fr></style></head><body><h1 id="gurgen-hayrapetyan">Gurgen Hayrapetyan</h1><hr/><blockquote><p>I’m a Software Engineer writing secure and reliable code for distributed and fault-tolerant systems.<br/>
+I’m skilled in Graph Databases, Real-Time systems, Erlang/Elixir, and Typescript.</p></blockquote><hr/><h2 id="education">Education</h2><dl><dt>2017-2020</dt><dd><strong>Bachelor of Science, Computer Science</strong>; American University of Armenia.
+</dd><dt>2011-2015</dt><dd><strong>Non-Degree Program, Computer Science and Information Systems</strong>; TUMO Center For Creative Technologies
+</dd></dl><h2 id="working-experience">Working Experience</h2><p><strong><a href="https://gruv.me" target="_blank">GRUV</a></strong> (2019 June - 2020 June)</p><p>Working as a Full-Stack Engineer, I was employee #2 to work on both the ReactJS Front-End and the TypeScript backend server, building the platform from the ground up.</p><p>I was the code-owner of the data layer, architecting GraphDB-backed services to enable community detection and platform personalization.</p><ul><li><a href="https://github.com/FILDI/arangocouch" target="_blank">ArangoCouch</a> - As a part of the work I’ve created an open-source library for fetching ArangoDB events in real-time.</li></ul><p><strong><a href="https://vineti.com" target="_blank">Vineti</a></strong> (2018 June - 2019 June)</p><p>As a Full-Stack Engineer, I worked on building both the user-facing ReactJS front-end using Redux and the Ruby On Rails server using the Trailblazer archiectural pattern.</p><p>I was the co-owner of a number of product areas regarding mainly Role-Based Access Control.</p><ul><li><a href="https://www.linkedin.com/posts/gurgenhayrapetyan_vineti-vinetiam-vinetiinternship-activity-6482906105356918784-lOeV" target="_blank">Internship Training</a> - As a part of the work I taught Ruby + Ruby on Rails to around 30 interns. I’ve also contributed to the creation of React/Redux course materials.</li></ul><p><strong><a href="https://globalr.com" target="_blank">GlobalR</a></strong> (2017 March - 2018 June)</p><p>I joined GlobalR as an intern, learning about Client-Server Architecture, Network Design, and Server-Side Development with Elixir/Phoenix. After a month I’ve joined the company as a junior Web Developer.</p><p>I’ve contributed to the re-building of a domain registry platform, building Elixir/Phoenix backend using the microservice archiectural pattern, while also creating server-side rendered internal front-end tools.</p><h2 id="technical-experience">Technical Experience</h2><dl><dt><a href="https://github.com/SquashConsulting" target="_blank">Squash</a></dt><dd><p>Squash is a collective of individuals creting FOSS solutions. I’m building and mainting the following projects:</p><ul><li><a href="https://github.com/SquashConsulting/kaliningrad" target="_blank">Kaliningrad</a> - Template Based Database Modeler Leveraging Power of Multi-Model Data Stores.</li><li><a href="https://github.com/SquashConsulting/SquashReader" target="_blank">SquashReader</a> - Modern, Federated, Collaborative RSS Reader.</li><li><a href="https://github.com/SquashConsulting/foxx_typescript" target="_blank">Foxx TypeScript</a> - ArangoDB Foxx Service Template with TypeScript &amp; Yarn 2.0 Support</li><li><a href="https://github.com/SquashConsulting/ecto_aql" target="_blank">Ecto AQL</a> - Ecto (A)rango (Q)uery (L)anguage database migrations, custom Repo.</li></ul></dd><dt>FOSS:</dt><dd><p>I’m also contributing to a number of FOSS projects mostly related to Elixir/Phoenix and Graph Databases:</p><ul><li><a href="https://github.com/arangodb" target="_blank">ArangoDB</a> - the multi-model NoSQL database.</li><li><a href="https://github.com/tootsuite/mastodon" target="_blank">Mastodon</a> - Self-hosted, globally interconnected microblogging community.</li><li><a href="https://github.com/ArangoDB-Community/arangodb_ecto" target="_blank">ArangoDB Ecto</a> - An Ecto adapter for ArangoDB.</li></ul></dd><dt>Programming Languages</dt><dd><strong>JavaScript/TypeScript:</strong> I’ve mostly worked in this ecosystem. I first started using javascript in middle school to build basic interactable websites with jQuery. I was introduced to JavaScript’s Differential Inheritence model and later on learned more about this style of OOP programming by learning Io and Self. Currently I’m mainly using TypeScript for the long-needed type-safety and better developer experience.
+</dd><dd><p><strong>Erlang/Elixir:</strong> I was introduced to the Functional Programming paradigm by learning Erlang and the early version of Elixir. By {re,un}-learning most of the stuff I took granted with imperative languages, FP made me re-think the way data flows and the way I build my programs.</p></dd><dd><p><strong>Ruby:</strong> I’ve worked with Ruby at Vineti and other freelance projects. I’ve mainly bult Ruby on Rails web backends and REST APIs. I’ve also used Ruby for some automation scripts.</p></dd><dd><p>Basic knowledge of <strong>C</strong>, <strong>Java</strong>, <strong>Python</strong>, <strong>SmallTalk</strong>.</p></dd></dl><h2 id="extra-curriculars">Extra Curriculars</h2><ul><li><p>Conferences/Webinars:</p><ul><li>I’ve talked at a number of local conferences such as <strong>BarCamp</strong>, and <strong>AUA Tech Talks</strong>.</li><li>I was recently invited to present the <a href="https://github.com/rasjonell/zuck_life" target="_blank">Foxx Way</a> archiectural pattern at <a href="https://youtu.be/VTXIL-fmSxY" target="_blank">ArangoDB Webinar</a></li></ul></li><li><p>I’ve published a number of articles at <a href="https://dev.to/rasjonell" target="_blank">Dev.to</a></p></li><li><p>I hold a number of certifications from Microsoft, TestDome, LinkedIn, and SoloLearn.</p></li></ul><hr/><blockquote><p><a href="mailto:me@գուրգեն.հայ" class="email">me@գուրգեն.հայ</a> • +374 (55)094999<br/>
+Ejmiatsin - Armenia.</p></blockquote></body></html></main>
+      <hr>
+      <footer>
+        
+
+<p>
+  Copyright &copy; 2020 Gurgen Hayrapetyan (rasjonell.)
+  <a href="https://rasjonell.tech">[Website]</a>
+  <a href="https://github.com/rasjonell">[GitHub]</a>
+</p>
+        <p>
+          Powered by <a href="https://github.com/Dalgona/Serum">Serum</a> v1.3.0,
+          with <a href="https://github.com/Dalgona/serum-theme-essence">Essence</a> theme
+        </p>
+      </footer>
+    </div>
+    <script src="/assets/js/prism.js"></script>
+  </body>
+</html>
+<script>
+const ws_url = "ws://" + location.host + "/serum_live_reloader";
+var ws;
+
+connect();
+
+function connect() {
+  ws = new WebSocket(ws_url);
+  ws.onmessage = onMessage;
+  ws.onclose = onClose;
+}
+
+function onMessage(e) {
+  if (e.data === "reload") {
+    location.reload();
+  }
+}
+
+function onClose(e) {
+  console.warn("WebSocket disconnected from server. Reconnecting in 10 seconds.");
+  setTimeout(connect, 10000)
+}
+</script>

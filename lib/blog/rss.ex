@@ -73,7 +73,7 @@ defmodule Blog.Rss do
     link = "#{@url}#{post.url}"
     desc = get_full_content(post, dest)
 
-    item(title, desc, link)
+    item(title, desc, link, post.date)
   end
 
   defp get_full_content(post, dest) do
@@ -95,12 +95,12 @@ defmodule Blog.Rss do
     """
   end
 
-  defp item(title, desc, link) do
+  defp item(title, desc, link, date) do
     """
     <item>
       <title>#{title}</title>
       <description><![CDATA[#{desc}]]></description>
-      <pubDate>#{current_date()}</pubDate>
+      <pubDate>#{date}</pubDate>
       <link>#{link}</link>
       <guid>#{link}</guid>
     </item>
